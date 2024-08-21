@@ -1,0 +1,55 @@
+Texture2D<float4> t0 : register(t0);
+Texture2D<float4> t1 : register(t1);
+StructuredBuffer<float4> t2 : register(t2);
+RWStructuredBuffer<float4> u0 : register(u0);
+
+cbuffer CB0 : register(b0)
+{
+    uint numThreads;
+};
+
+[numthreads(64, 1, 1)]
+void main(uint3 threadID : SV_DispatchThreadID)
+{
+    uint tid = threadID.x;
+    if (tid >= numThreads)
+        return;
+
+    uint offset0 = tid * 40;
+    float3 v1 = t0.Load3(offset0);
+    uint offset1 = tid * 40 + 12;
+    float3 v2 = t0.Load3(offset1);
+    uint offset2 = tid * 40 + 24;
+    float4 v3 = t0.Load4(offset2);
+
+    uint offset3 = (tid << 5);
+    float4 v4 = t1.Load4(offset3);
+    uint offset4 = (tid * 32) + 16;
+    float4 v5 = t1.Load4(offset4);
+
+    float3 v6 = t2[v5.x].xyz;
+    float3 v7 = t2[v5.x + 1].xyz;
+    float3 v8 = t2[v5.x + 2].xyz;
+    float4 v9 = float4(t2[v5.x + 3].xyz, t2[v5.x + 3].w);
+
+    float4 v10 = float4(v6.x, v7.x, v8.x, v9.x);
+    float4 v11 = float4(v6.y, v7.y, v8.y, v9.y);
+    float3 v12 = float3(v6.z, v7.z, v8.z);
+
+    v6 = t2[v5.y].xyz;
+    v7 = t2[v5.y + 1].xyz;
+    v8 = t2[v5.y + 2].xyz;
+    float4 v13 = float4(t2[v5.y + 3].xyz, t2[v5.y + 3].w);
+
+    v13 *= v4.y;
+    v14 = v11 * v4.x + v13;
+    v6 = v12 * v4.x + v6 * v4.z;
+
+    v13 = t2[v5.z].xyzw;
+    v14 = v10 * v4.x + v13 * v4.w;
+    v6 = v9 * v4.x + v6 * v4.w;
+
+    u0[offset0] = float4(v14.xyz, 1.0);
+    u0[offset1] = float4(v14.xyz, 1.0);
+    u0[offset2] = float4(v6.xyz, v3.w);
+}
