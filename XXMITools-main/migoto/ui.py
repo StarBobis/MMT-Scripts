@@ -130,6 +130,7 @@ class MIGOTO_PT_ImportFrameAnalysisManualOrientation(MigotoImportOptionsPanelBas
         operator = context.space_data.active_operator
         self.layout.prop(operator, "axis_forward")
         self.layout.prop(operator, "axis_up")
+        
 class MIGOTO_PT_ImportFrameAnalysisCleanUp(MigotoImportOptionsPanelBase, bpy.types.Panel):
     bl_label = "Clean Up mesh after import"
     bl_order = 6
