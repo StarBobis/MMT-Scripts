@@ -28,5 +28,7 @@ def main():
             insert_str = get_insert_str()
             file.write(insert_str + '\n')
 
+
 if __name__ == "__main__":
+    # 用于生成Mod加密使用的密钥列表
     main()
